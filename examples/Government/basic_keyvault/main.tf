@@ -7,7 +7,7 @@ data "azuread_group" "admin_group" {
 
 module "mod_key_vault" {
 
-  #source  = "github.com/POps-Rox/tf-az-overlays-keyvault"
+  #source  = "github.com/POps-Rox/terraform-az-overlays-keyvault"
   #version = "x.x.x"
   source = "../../.."
   providers = {
