@@ -1,5 +1,81 @@
 # Changelog
 
+## [2.0.0] - Phase 1 azurerm 4.x upgrade
+
+### ⚠️ BREAKING CHANGES
+
+This release upgrades the module to `azurerm` provider `~> 4.20` and Terraform `>= 1.10`.
+Consumers must upgrade their root configurations and downstream POps-Rox overlay modules
+(`azregionslookup`, `diagnosticsettings`, `resourcegroup`) in lockstep — see the
+"Cross-module dependency" note below.
+
+### Provider / Terraform versions
+
+- `terraform.required_version` bumped from `>= 1.9` to `>= 1.10`.
+- `azurerm` constraint bumped from `~> 3.116` to `~> 4.20`.
+- Added `azapi ~> 2.0` to `required_providers` for fleet alignment.
+- `popsrox` provider source remains `POps-Rox/azutils ~> 1.0`.
+
+### `azurerm_key_vault` (`resources.keyvault.tf`)
+
+- Renamed `enable_rbac_authorization` → `rbac_authorization_enabled` (4.x rename).
+  The module variable was already named `rbac_authorization_enabled`; only the
+  resource argument was renamed.
+- `public_network_access_enabled` is set explicitly from `var.public_network_access_enabled`
+  (var default kept at `false`, matching prior secure-by-default behavior).
+- `purge_protection_enabled` is set explicitly from `var.enable_purge_protection`
+  (var default kept at `false`, matching prior behavior — note that once enabled,
+  purge protection cannot be disabled).
+- `soft_delete_retention_days` variable default kept at `7` to preserve prior
+  module behavior. The azurerm 4.x provider default is `90`; consumers who relied
+  on the implicit provider default were already insulated because the module
+  always passed `var.soft_delete_retention_days` explicitly.
+- `network_acls.default_action` continues to default to `Deny` in the module
+  variable type — required by 4.x when the `network_acls` block is present.
+
+### `azurerm_role_assignment` (`resources.keyvault.rbac.tf`)
+
+- Added `principal_type` to all three role assignments (`Key Vault Administrator`,
+  `Key Vault Secrets User`, `Key Vault Reader`) sourced from a new
+  `role_assignment_principal_type` variable (default `null` = provider auto-detect).
+  This avoids the eventual-consistency lookup that 4.x performs when
+  `principal_type` is omitted; recommended values are `Group`, `User`, or
+  `ServicePrincipal`.
+
+### `azurerm_key_vault_access_policy` (`resources.keyvault.policies.tf`)
+
+- No structural changes required by 4.x. The resource is unchanged.
+
+### Diagnostic settings
+
+- This module delegates diagnostics to `terraform-az-overlays-diagnosticsettings`;
+  no `retention_policy` blocks exist in this repo, so the 4.x removal of that
+  block does not apply here. The downstream diagnostics overlay must be upgraded
+  separately.
+
+### Cross-module dependency (NOT YET RESOLVED IN MAIN)
+
+This module sources three sibling POps-Rox overlays from `github.com/POps-Rox/...`
+HEAD:
+
+- `terraform-az-overlays-azregionslookup`
+- `terraform-az-overlays-diagnosticsettings`
+- `terraform-az-overlays-resourcegroup`
+
+All three currently pin `azurerm ~> 3.116` on `main`, which is incompatible with
+this module's new `~> 4.20`. Until those modules publish 4.x-compatible releases,
+`terraform init` against the published `main` of the overlays will fail with a
+provider-version conflict. Validation in this PR was performed with local stubs
+to confirm the module's own surface; the stubs are NOT committed.
+
+### Examples (`examples/**/versions.tf`)
+
+- All 8 example `versions.tf` files regenerated to use Terraform `>= 1.10`,
+  `azurerm ~> 4.20`, `azapi ~> 2.0`, `popsrox ~> 1.0`, and `azuread >= 2.0.0`.
+- Provider blocks (`azurerm`, `azurerm.hub`, `azuread`) preserved.
+
+---
+
 ## [Unreleased](https://github.com/Azure/terraform-verified-module/tree/HEAD)
 
 **Merged pull requests:**

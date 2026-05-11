@@ -7,6 +7,7 @@ resource "azurerm_role_assignment" "rbac_keyvault_administrator" {
   scope                = one(azurerm_key_vault.this[*].id)
   role_definition_name = "Key Vault Administrator"
   principal_id         = each.value
+  principal_type       = var.role_assignment_principal_type
 }
 
 resource "azurerm_role_assignment" "rbac_keyvault_secrets_users" {
@@ -15,6 +16,7 @@ resource "azurerm_role_assignment" "rbac_keyvault_secrets_users" {
   scope                = one(azurerm_key_vault.this[*].id)
   role_definition_name = "Key Vault Secrets User"
   principal_id         = each.value
+  principal_type       = var.role_assignment_principal_type
 }
 
 resource "azurerm_role_assignment" "rbac_keyvault_reader" {
@@ -23,4 +25,5 @@ resource "azurerm_role_assignment" "rbac_keyvault_reader" {
   scope                = one(azurerm_key_vault.this[*].id)
   role_definition_name = "Key Vault Reader"
   principal_id         = each.value
+  principal_type       = var.role_assignment_principal_type
 }

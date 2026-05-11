@@ -81,6 +81,16 @@ variable "rbac_authorization_enabled" {
   default     = false
 }
 
+variable "role_assignment_principal_type" {
+  type        = string
+  description = "The type of principal used for role assignments targeting the Key Vault (one of `User`, `Group`, `ServicePrincipal`, or `null`). Setting this avoids the 4.x role-assignment eventual-consistency lookup. Leave `null` to let the provider auto-detect."
+  default     = null
+  validation {
+    condition     = var.role_assignment_principal_type == null || contains(["User", "Group", "ServicePrincipal", "ForeignGroup"], coalesce(var.role_assignment_principal_type, "User"))
+    error_message = "role_assignment_principal_type must be one of: User, Group, ServicePrincipal, ForeignGroup, or null."
+  }
+}
+
 variable "certificate_contacts" {
   description = "Contact information to send notifications triggered by certificate lifetime events"
   type = list(object({
