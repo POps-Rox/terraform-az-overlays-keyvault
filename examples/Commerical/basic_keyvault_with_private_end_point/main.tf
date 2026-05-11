@@ -5,7 +5,7 @@
 # Azure Region Lookup
 #----------------------------------------------------------
 module "mod_azure_region_lookup" {
-  source = "github.com/POps-Rox/tf-az-overlays-azregionslookup"
+  source = "github.com/POps-Rox/terraform-az-overlays-azregionslookup"
 
   azure_region = "eastus"
 }
@@ -21,7 +21,7 @@ module "mod_key_vault" {
     azurerm_virtual_network.kv_vnet,
     azurerm_subnet.kv_subnet,
   ]
-  #source  = "github.com/POps-Rox/tf-az-overlays-keyvault"
+  #source  = "github.com/POps-Rox/terraform-az-overlays-keyvault"
   #version = "x.x.x"
   source = "../../.."
   providers = {

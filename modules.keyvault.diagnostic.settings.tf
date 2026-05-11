@@ -6,7 +6,7 @@
 ##-------------------------------------------------------
 module "mod_diagnostic_settings_key_vault" {
   count  = length(var.logs_destinations_ids) > 0 ? 1 : 0
-  source = "github.com/POps-Rox/tf-az-overlays-diagnosticsettings"
+  source = "github.com/POps-Rox/terraform-az-overlays-diagnosticsettings"
 
   # Resource Group, location, VNet and Subnet details
   location           = var.location
