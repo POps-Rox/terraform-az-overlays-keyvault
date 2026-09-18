@@ -75,8 +75,11 @@ override.tf.json
 # Exclude tests files you do wish to add to version control using negated pattern
 #
 tests/**
+!tests/
+!tests/**/*.tftest.hcl
 tests/**/terraform.tfvars
 test/go.sum
+zz_terraform_validate_provider.tf
 
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*

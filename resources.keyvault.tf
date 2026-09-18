@@ -39,15 +39,6 @@ resource "azurerm_key_vault" "this" {
     }
   }
 
-  dynamic "contact" {
-    for_each = var.certificate_contacts
-    content {
-      email = contact.value.email
-      name  = contact.value.name
-      phone = contact.value.phone
-    }
-  }
-
   lifecycle {
     ignore_changes = [
       tags,
@@ -60,4 +51,19 @@ resource "azurerm_key_vault" "this" {
 moved {
   from = azurerm_key_vault.this
   to   = azurerm_key_vault.this[0]
+}
+
+resource "azurerm_key_vault_certificate_contacts" "this" {
+  count = !var.managed_hardware_security_module_enabled && length(var.certificate_contacts) > 0 ? 1 : 0
+
+  key_vault_id = azurerm_key_vault.this[0].id
+
+  dynamic "contact" {
+    for_each = var.certificate_contacts
+    content {
+      email = contact.value.email
+      name  = contact.value.name
+      phone = contact.value.phone
+    }
+  }
 }
