@@ -35,6 +35,6 @@ output "secrets" {
 }
 
 output "contacts" {
-  value       = azurerm_key_vault.this[*].contact
+  value       = azurerm_key_vault_certificate_contacts.this[*].contact
   description = "Blocks containing each contact."
 }
